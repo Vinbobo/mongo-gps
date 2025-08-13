@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="description" content="Ứng dụng điểm danh GPS cho nhân viên">
+  <meta name="keywords" content="GPS, điểm danh, nhân viên, ứng dụng">
+  <meta name="author" content="SUN Test">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <title>Chấm công GPS</title>
+</head>
+<body>
+  <div class="container">
+    <h2>Chấm công GPS</h2>
+    <form id="checkinForm">
+      <label for="empId">Mã nhân viên:</label><br>
+      <input type="text" id="empId" required placeholder="Nhập mã nhân viên"><br>
+      <label for="empName">Tên nhân viên:</label><br>
+      <input type="text" id="empName" required placeholder="Nhập tên nhân viên"><br>
+      <button type="submit">Điểm danh</button>
+    </form>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    document.getElementById("checkinForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      if (!navigator.geolocation) {
+        document.getElementById("status").innerText = "Trình duyệt không hỗ trợ GPS.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(success, error, { enableHighAccuracy: true });
+
+      function success(position) {
+        const data = {
+          EmployeeId: document.getElementById("empId").value.trim(),
+          EmployeeName: document.getElementById("empName").value.trim(),
+          Latitude: position.coords.latitude,
+          Longitude: position.coords.longitude
+        };
+
+        fetch("/api/checkin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        })
+        .then(async (res) => {
+          const payload = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(payload.message || "Lỗi không xác định");
+          return payload;
+        })
+        .then(result => {
+          document.getElementById("status").innerText = result.message || "Thành công";
+          document.getElementById("checkinForm").reset();
+        })
+        .catch(err => {
+          document.getElementById("status").innerText = "Chấm công thất bại: " + err.message;
+        });
+      }
+
+      function error(err) {
+        document.getElementById("status").innerText = "Không thể lấy vị trí của bạn.";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>
