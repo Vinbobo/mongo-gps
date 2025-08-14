@@ -7,22 +7,53 @@
   <meta name="keywords" content="GPS, điểm danh, nhân viên, ứng dụng">
   <meta name="author" content="SUN Test">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <title>Chấm công GPS</title>
+  <style>
+    #map { height: 400px; width: 100%; margin-top: 20px; display: none; }
+    .flex-container { display: flex; gap: 30px; }
+    .container { flex: 1; }
+    .map-container { flex: 1; }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Chấm công GPS</h2>
-    <form id="checkinForm">
-      <label for="empId">Mã nhân viên:</label><br>
-      <input type="text" id="empId" required placeholder="Nhập mã nhân viên"><br>
-      <label for="empName">Tên nhân viên:</label><br>
-      <input type="text" id="empName" required placeholder="Nhập tên nhân viên"><br>
-      <button type="submit">Điểm danh</button>
-    </form>
-    <p id="status"></p>
+  <div class="flex-container">
+    <div class="container">
+      <h2>Chấm công GPS</h2>
+      <form id="checkinForm">
+        <label for="empId">Mã nhân viên:</label><br>
+        <input type="text" id="empId" required placeholder="Nhập mã nhân viên"><br>
+        <label for="empName">Tên nhân viên:</label><br>
+        <input type="text" id="empName" required placeholder="Nhập tên nhân viên"><br>
+        <button type="submit">Điểm danh</button>
+      </form>
+      <p id="status"></p>
+    </div>
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
   </div>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
+    let map, marker;
+
+    function showMap(lat, lng) {
+      document.getElementById("map").style.display = "block";
+      if (!map) {
+        map = L.map('map').setView([lat, lng], 16);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        marker = L.marker([lat, lng]).addTo(map);
+      } else {
+        map.setView([lat, lng], 16);
+        marker.setLatLng([lat, lng]);
+      }
+    }
+
     document.getElementById("checkinForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
@@ -54,6 +85,7 @@
         .then(result => {
           document.getElementById("status").innerText = result.message || "Thành công";
           document.getElementById("checkinForm").reset();
+          showMap(data.Latitude, data.Longitude); // Hiển thị bản đồ
         })
         .catch(err => {
           document.getElementById("status").innerText = "Chấm công thất bại: " + err.message;
