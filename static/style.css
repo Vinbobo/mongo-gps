@@ -3,38 +3,53 @@ body {
   background: #f5f6fa;
   margin: 0;
   padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
+
+/* Bố cục chung */
+.flex-container {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Form container */
 .container {
   background: #fff;
   padding: 32px 24px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-  width: 100%;
+  flex: 1;
   max-width: 400px;
 }
+
 h2 {
   text-align: center;
   color: #273c75;
   margin-bottom: 24px;
 }
+
 label {
   font-weight: 500;
   color: #353b48;
+  display: block;
+  margin-top: 10px;
 }
+
 input[type="text"] {
   width: 100%;
   padding: 10px;
   margin-top: 6px;
-  margin-bottom: 18px;
   border: 1px solid #dcdde1;
   border-radius: 6px;
   font-size: 16px;
   box-sizing: border-box;
 }
+
 button {
   width: 100%;
   padding: 12px;
@@ -45,15 +60,47 @@ button {
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
+  margin-top: 20px;
   transition: background 0.2s;
 }
+
 button:hover {
   background: #40739e;
 }
+
+/* Map container */
+.map-container {
+  flex: 1;
+  max-width: 600px;
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+  display: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .flex-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .container, .map-container {
+    width: 100%;
+    max-width: 500px;
+  }
+  #map {
+    height: 300px;
+  }
+}
+
 @media (max-width: 500px) {
   .container {
-    padding: 18px 6px;
-    max-width: 98vw;
+    padding: 18px 14px;
   }
   h2 {
     font-size: 20px;
