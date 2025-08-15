@@ -10,28 +10,64 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <title>Chấm công GPS</title>
+  <style>
+    #map { height: 400px; width: 100%; margin-top: 20px; display: none; }
+    .flex-container { display: flex; gap: 30px; }
+    .container { flex: 1; }
+    .map-container { flex: 1; }
+    /* Header styles */
+    header {
+      display: flex;
+      align-items: center;
+      background: #f5f5f5;
+      padding: 10px 30px;
+      border-bottom: 1px solid #ddd;
+    }
+    .logo {
+      height: 40px;
+      margin-right: 15px;
+    }
+    .header-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+    /* Footer styles */
+    footer {
+      margin-top: 40px;
+      padding: 15px 0;
+      background: #f5f5f5;
+      border-top: 1px solid #ddd;
+      text-align: center;
+      color: #666;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" class="logo">
+    <span class="header-title">Chấm công GPS</span>
+  </header>
   <div class="flex-container">
     <div class="container">
       <h2>Chấm công GPS</h2>
       <form id="checkinForm">
-        <label for="empId">Mã nhân viên:</label>
-        <input type="text" id="empId" required placeholder="Nhập mã nhân viên">
-
-        <label for="empName">Tên nhân viên:</label>
-        <input type="text" id="empName" required placeholder="Nhập tên nhân viên">
-
+        <label for="empId">Mã nhân viên:</label><br>
+        <input type="text" id="empId" required placeholder="Nhập mã nhân viên"><br>
+        <label for="empName">Tên nhân viên:</label><br>
+        <input type="text" id="empName" required placeholder="Nhập tên nhân viên"><br>
         <button type="submit">Điểm danh</button>
       </form>
       <p id="status"></p>
     </div>
-
     <div class="map-container">
       <div id="map"></div>
     </div>
   </div>
-
+  <footer>
+    &copy; 2025 SUN Test - Ứng dụng điểm danh GPS
+  </footer>
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
@@ -82,7 +118,7 @@
         .then(result => {
           document.getElementById("status").innerText = result.message || "Thành công";
           document.getElementById("checkinForm").reset();
-          showMap(data.Latitude, data.Longitude);
+          showMap(data.Latitude, data.Longitude); // Hiển thị bản đồ
         })
         .catch(err => {
           document.getElementById("status").innerText = "Chấm công thất bại: " + err.message;
